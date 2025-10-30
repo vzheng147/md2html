@@ -1,0 +1,9 @@
+# Conda environments
+md2html-env/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# macOS system file
+.DS_Store
