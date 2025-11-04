@@ -17,7 +17,7 @@ def convert_paragraph(text: str) -> str:
 def convert_headings(text: str) -> str:
     parts = text.split("\n")
 
-    # ATX: "# ...", "## ...", up to "###### ..."
+    # for "#"
     if len(parts) == 1:
         line = parts[0]
         m = re.match(r'^(#{1,6})\s+(.+?)\s*$', line)
@@ -27,9 +27,9 @@ def convert_headings(text: str) -> str:
         body = m.group(2)
         return f"<h{level}>{body}</h{level}>"
 
-    # Setext: "Title" + underline of ===... (H1) or ---... (H2)
+    # for "==" or "--"
     if len(parts) == 2:
-        title, underline = parts[0].rstrip(), parts[1]
+        title, underline = parts[0], parts[1]
         if title.strip():
             if re.match(r'^\s*={2,}\s*$', underline):
                 return f"<h1>{title.strip()}</h1>"
@@ -37,5 +37,47 @@ def convert_headings(text: str) -> str:
                 return f"<h2>{title.strip()}</h2>"
         return text
 
-   
     return None
+
+def convert_unordered_list(text: str) -> str:
+    lines = text.split('\n')
+    result = "<ul>\n"
+    
+    # Loop through all lines
+    for line in lines:
+        # Skip the initial "+ ", "- ", or "* "
+        list_item = line[2:]
+        # Wrap in <li> tags
+        result += "  <li>" + list_item + "</li>\n"
+    
+    result += "</ul>"
+    return result
+
+def convert_ordered_list(text: str) -> str:
+    lines = text.split('\n')
+    result = "<ol>\n"
+    
+    # Loop through all lines
+    for line in lines:
+        # Skip the initial "1. ", "2. ", or "3. "
+        list_item = line[3:]
+        # Wrap in <li> tags
+        result += "  <li>" + list_item + "</li>\n"
+    
+    result += "</ol>"
+    return result
+
+def convert_code(text: str) -> str:
+    # double backticks: ``code``
+    text = re.sub(r'``([^`\n]+)``', r'<code>\1</code>', text)
+    # single backticks: `code`
+    text = re.sub(r'`([^`\n]+)`', r'<code>\1</code>', text)
+    return text
+
+def convert_link(text: str) -> str:
+    # Parsing [label](url) 
+    pattern = r'\[([^\]]+)\]\(([^)\s]+)\)'
+    replacement = r'<a href="\2">\1</a>'
+    # Do the substitution
+    result = re.sub(pattern, replacement, text)
+    return result
