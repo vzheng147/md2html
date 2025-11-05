@@ -7,5 +7,6 @@ This implementation follows all the rules specified in the assignment document. 
 ## How to Run Tests
 
 1. Download all files and place them in the same directory
-2. Run: `conda activate md2html`
-3. Run: `pytest`
+2. cd into that directory
+3. Run: `conda activate md2html-env`
+4. Run: `pytest`
